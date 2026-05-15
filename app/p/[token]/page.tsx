@@ -17,19 +17,29 @@ export default async function PlayerPage({
   const { tab = "predictions", message, filter = "all" } = await searchParams;
   const { supabase, player } = await getPlayerByToken(token);
 
-  const [{ data: matches }, { data: predictions }, { data: results }, { data: leaderboard }, { data: championPick }, { data: championSetting }] =
+  const [
+    { data: matches },
+    { data: predictions },
+    { data: results },
+    { data: leaderboard },
+    { data: championPick },
+    { data: championSetting },
+    { data: bracketSlots }
+  ] =
     await Promise.all([
       supabase.from("matches").select("*").order("starts_at"),
       supabase.from("player_predictions").select("*, contest_players(display_name,initials,avatar_url)").order("match_id"),
       supabase.from("match_results").select("*").eq("status", "approved"),
       supabase.from("player_leaderboard").select("*"),
       supabase.from("player_champion_picks").select("*").eq("player_id", player.id).maybeSingle(),
-      supabase.from("contest_settings").select("*").eq("key", "champion").maybeSingle()
+      supabase.from("contest_settings").select("*").eq("key", "champion").maybeSingle(),
+      supabase.from("bracket_slots").select("*")
     ]);
 
   const predictionMap = new Map((predictions || []).map((item) => [`${item.player_id}:${item.match_id}`, item]));
   const myPredictionMap = new Map((predictions || []).filter((item) => item.player_id === player.id).map((item) => [item.match_id, item]));
   const resultMap = new Map((results || []).map((item) => [item.match_id, item]));
+  const slotMap = new Map((bracketSlots || []).filter((slot) => slot.team_name).map((slot) => [slot.slot_code, slot.team_name]));
   const rows = rankWithSharedPlaces((leaderboard || []).sort((a, b) => b.total_points - a.total_points));
   const firstKickoff = Math.min(...(matches || []).map((match) => new Date(match.starts_at).getTime()));
   const championOpen = firstKickoff > Date.now();
@@ -128,17 +138,12 @@ export default async function PlayerPage({
                     </div>
                     <div className="teams">
                       <strong>
-                        <TeamName name={match.home_team} />
+                        <TeamName name={match.home_team} slots={slotMap} />
                       </strong>
                       <span>vs</span>
                       <strong>
-                        <TeamName name={match.away_team} />
+                        <TeamName name={match.away_team} slots={slotMap} />
                       </strong>
-                      {!match.group_code ? (
-                        <span>
-                          Bracket slots: {match.home_team} vs {match.away_team}
-                        </span>
-                      ) : null}
                       {result ? (
                         <span>
                           Result: {result.home_score}-{result.away_score} | Your points: {points}

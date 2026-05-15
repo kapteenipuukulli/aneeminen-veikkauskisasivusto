@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import { PlayerAvatar } from "@/components/link-mode/avatar";
 import { MatchMeta, TeamName } from "@/components/link-mode/common";
+import { groupSlots } from "@/data/bracket";
 import { contestPlayers } from "@/data/players";
 import { teams } from "@/data/world-cup-2026";
 import { getPlayerByToken, publicAdminUrl, publicPlayerUrl } from "@/lib/link-mode";
-import { approveLinkedResult, resetLinkedContest, saveLinkedChampionResult } from "./actions";
+import { approveLinkedResult, resetLinkedContest, saveBracketSlot, saveLinkedChampionResult } from "./actions";
 
 export default async function LinkedAdminPage({
   params,
@@ -18,14 +19,16 @@ export default async function LinkedAdminPage({
   const { supabase, player } = await getPlayerByToken(token);
   if (!player.is_admin) notFound();
 
-  const [{ data: matches }, { data: results }, { data: championSetting }, { data: players }] = await Promise.all([
+  const [{ data: matches }, { data: results }, { data: championSetting }, { data: players }, { data: bracketSlots }] = await Promise.all([
     supabase.from("matches").select("*").order("starts_at"),
     supabase.from("match_results").select("*"),
     supabase.from("contest_settings").select("*").eq("key", "champion").maybeSingle(),
-    supabase.from("contest_players").select("*").order("display_name")
+    supabase.from("contest_players").select("*").order("display_name"),
+    supabase.from("bracket_slots").select("*")
   ]);
 
   const resultMap = new Map((results || []).map((item) => [item.match_id, item]));
+  const slotMap = new Map((bracketSlots || []).filter((slot) => slot.team_name).map((slot) => [slot.slot_code, slot.team_name]));
   const baseUrl = process.env.SITE_URL || "http://localhost:3000";
 
   return (
@@ -99,6 +102,34 @@ export default async function LinkedAdminPage({
 
         <section className="panel grid">
           <div>
+            <p className="eyebrow">Bracket</p>
+            <h2>Group qualifiers and third-place slots</h2>
+            <p className="muted">Set these after the group stage. Knockout winners advance automatically after results are approved.</p>
+          </div>
+          <div className="grid grid-3">
+            {groupSlots.map((slot) => (
+              <form action={saveBracketSlot} className="card grid" key={slot}>
+                <input name="token" type="hidden" value={token} />
+                <input name="slotCode" type="hidden" value={slot} />
+                <label>
+                  {slot}
+                  <select name="teamName" defaultValue={slotMap.get(slot) || ""}>
+                    <option value="">TBD</option>
+                    {teams.map((team) => (
+                      <option key={team.name} value={team.name}>
+                        {team.flag} {team.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button type="submit">Save slot</button>
+              </form>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel grid">
+          <div>
             <p className="eyebrow">Reset</p>
             <h2>Reset contest data</h2>
             <p className="muted">Type RESET before pressing a reset button.</p>
@@ -145,13 +176,13 @@ export default async function LinkedAdminPage({
                   </div>
                   <div className="teams">
                     <strong>
-                      <TeamName name={match.home_team} />
+                      <TeamName name={match.home_team} slots={slotMap} />
                     </strong>
                     <span>vs</span>
                     <strong>
-                      <TeamName name={match.away_team} />
+                      <TeamName name={match.away_team} slots={slotMap} />
                     </strong>
-                    {!match.group_code ? <span>Bracket slots: {match.home_team} vs {match.away_team}</span> : null}
+                    {!match.group_code ? <span>Slots: {match.home_team} vs {match.away_team}</span> : null}
                   </div>
                   <form action={approveLinkedResult} className="score-form">
                     <input name="token" type="hidden" value={token} />

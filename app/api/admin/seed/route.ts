@@ -39,6 +39,13 @@ export async function POST(request: Request) {
   const matchInsert = await admin.from("matches").upsert(matchRows);
   if (matchInsert.error) return NextResponse.json({ error: matchInsert.error.message }, { status: 500 });
 
+  for (const match of matchRows) {
+    await admin
+      .from("matches")
+      .update({ home_team: match.home_team, away_team: match.away_team, stage: match.stage })
+      .eq("id", match.id);
+  }
+
   const playerInsert = await admin.from("contest_players").upsert(playerRows);
   if (playerInsert.error) return NextResponse.json({ error: playerInsert.error.message }, { status: 500 });
 

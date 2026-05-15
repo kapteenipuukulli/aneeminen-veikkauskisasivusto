@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { bracketMatchById } from "@/data/bracket";
 import { getPlayerByToken } from "@/lib/link-mode";
 import { sendEmail } from "@/lib/email";
 
@@ -30,6 +32,14 @@ export async function approveLinkedResult(formData: FormData) {
     entity_id: matchId,
     old_value: oldValue,
     new_value: { match_id: matchId, home_score: homeScore, away_score: awayScore, status: "approved" }
+  });
+
+  await advanceBracketWinner({
+    supabase,
+    matchId,
+    homeScore,
+    awayScore,
+    updatedBy: player.id
   });
 
   await notifyLinkedPlayers(token, matchId);
@@ -89,6 +99,83 @@ export async function resetLinkedContest(formData: FormData) {
 
   revalidatePath(`/admin/${token}`);
   redirect(`/admin/${token}?message=${mode === "all" ? "Predictions and results reset." : "Results reset."}`);
+}
+
+export async function saveBracketSlot(formData: FormData) {
+  const token = String(formData.get("token"));
+  const slotCode = String(formData.get("slotCode"));
+  const teamName = String(formData.get("teamName"));
+  const { supabase, player } = await getPlayerByToken(token);
+  if (!player.is_admin) redirect(`/p/${token}?message=Admin only.`);
+
+  if (!teamName) {
+    await supabase.from("bracket_slots").delete().eq("slot_code", slotCode);
+  } else {
+    const { error } = await supabase.from("bracket_slots").upsert({
+      slot_code: slotCode,
+      team_name: teamName,
+      source: "admin",
+      updated_by: player.id
+    });
+    if (error) redirect(`/admin/${token}?message=${encodeURIComponent(error.message)}`);
+  }
+
+  await supabase.from("admin_audit_log").insert({
+    action: "set_bracket_slot",
+    entity_type: "bracket_slot",
+    entity_id: slotCode,
+    new_value: { slot_code: slotCode, team_name: teamName || null }
+  });
+
+  revalidatePath(`/admin/${token}`);
+}
+
+async function advanceBracketWinner({
+  supabase,
+  matchId,
+  homeScore,
+  awayScore,
+  updatedBy
+}: {
+  supabase: SupabaseClient;
+  matchId: string;
+  homeScore: number;
+  awayScore: number;
+  updatedBy: string;
+}) {
+  const bracket = bracketMatchById.get(matchId);
+  if (!bracket || homeScore === awayScore) return;
+
+  const { data: existingSlots } = await supabase
+    .from("bracket_slots")
+    .select("*")
+    .in("slot_code", [bracket.homeSlot, bracket.awaySlot]);
+
+  const slotMap = new Map((existingSlots || []).map((slot: any) => [slot.slot_code, slot.team_name]));
+  const homeTeam = slotMap.get(bracket.homeSlot);
+  const awayTeam = slotMap.get(bracket.awaySlot);
+  if (!homeTeam || !awayTeam) return;
+
+  const winner = homeScore > awayScore ? homeTeam : awayTeam;
+  const loser = homeScore > awayScore ? awayTeam : homeTeam;
+
+  if (bracket.winnerSlot) {
+    await supabase.from("bracket_slots").upsert({
+      slot_code: bracket.winnerSlot,
+      team_name: winner,
+      source: "result",
+      updated_by: updatedBy
+    });
+  }
+
+  if (bracket.loserSlot) {
+    await supabase.from("bracket_slots").upsert({
+      slot_code: bracket.loserSlot,
+      team_name: loser,
+      source: "result",
+      updated_by: updatedBy
+    });
+  }
 }
 
 async function notifyLinkedPlayers(token: string, matchId: string) {

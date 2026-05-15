@@ -38,6 +38,14 @@ create table if not exists public.player_notification_log (
   unique (player_id, kind, entity_id)
 );
 
+create table if not exists public.bracket_slots (
+  slot_code text primary key,
+  team_name text references public.teams(name),
+  source text not null default 'admin',
+  updated_by text references public.contest_players(id),
+  updated_at timestamptz not null default now()
+);
+
 create or replace view public.player_leaderboard as
 with match_points as (
   select
@@ -79,7 +87,26 @@ alter table public.contest_players enable row level security;
 alter table public.player_predictions enable row level security;
 alter table public.player_champion_picks enable row level security;
 alter table public.player_notification_log enable row level security;
+alter table public.bracket_slots enable row level security;
 
+drop trigger if exists contest_players_touch on public.contest_players;
 create trigger contest_players_touch before update on public.contest_players for each row execute procedure public.touch_updated_at();
+
+drop trigger if exists player_predictions_touch on public.player_predictions;
 create trigger player_predictions_touch before update on public.player_predictions for each row execute procedure public.touch_updated_at();
+
+drop trigger if exists player_champion_picks_touch on public.player_champion_picks;
 create trigger player_champion_picks_touch before update on public.player_champion_picks for each row execute procedure public.touch_updated_at();
+
+create or replace function public.touch_bracket_slot()
+returns trigger
+language plpgsql
+as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+
+drop trigger if exists bracket_slots_touch on public.bracket_slots;
+create trigger bracket_slots_touch before update on public.bracket_slots for each row execute procedure public.touch_bracket_slot();

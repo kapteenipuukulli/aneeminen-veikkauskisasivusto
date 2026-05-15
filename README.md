@@ -21,6 +21,8 @@ Private World Cup 2026 prediction contest for friends.
 - audit log for admin result/champion changes
 - automatic leaderboard with shared ranks for tied scores
 - group standings from approved results
+- manual group qualifier slots for the knockout bracket
+- automatic knockout winner advancement after admin-approved results
 - FIFA news tab through a server route
 - privacy policy and contest terms pages
 
@@ -94,6 +96,17 @@ curl -X POST https://your-site.com/api/cron/fetch-results \
 ```
 
 Imported live results are saved as `pending`. The admin must approve them before points and emails become official.
+
+## Knockout bracket slots
+
+The knockout bracket uses slot codes such as `A1`, `A2`, `W73` and `L101`.
+
+- After the group stage, JP sets the group qualifier slots manually in the admin page.
+- Player pages show unresolved slots as `TBD`.
+- When JP approves a knockout result, the winner is automatically written to the next `W...` slot.
+- Semi-final losers are written to `L101` and `L102`, which fill the third-place match.
+
+If this feature is added to an existing Supabase project, run `supabase/link-mode.sql` again. It is written with `if not exists` for the new tables.
 
 ## Important rules
 
