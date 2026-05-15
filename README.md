@@ -78,6 +78,7 @@ Private World Cup 2026 prediction contest for friends.
 - `CRON_SECRET`
 - `LIVE_RESULTS_API_URL`
 - `LIVE_RESULTS_API_KEY`
+- `FOOTBALL_DATA_API_KEY`
 
 ## Cron endpoints
 
@@ -96,6 +97,9 @@ curl -X POST https://your-site.com/api/cron/fetch-results \
 ```
 
 Imported live results are saved as `pending`. The admin must approve them before points and emails become official.
+
+The built-in importer uses football-data.org when `FOOTBALL_DATA_API_KEY` is configured. It sends the key as the
+`X-Auth-Token` header and imports finished matches only.
 
 ## Knockout bracket slots
 
