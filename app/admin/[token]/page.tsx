@@ -151,6 +151,7 @@ export default async function LinkedAdminPage({
                     <strong>
                       <TeamName name={match.away_team} />
                     </strong>
+                    {!match.group_code ? <span>Bracket slots: {match.home_team} vs {match.away_team}</span> : null}
                   </div>
                   <form action={approveLinkedResult} className="score-form">
                     <input name="token" type="hidden" value={token} />

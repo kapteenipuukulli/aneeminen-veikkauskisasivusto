@@ -134,6 +134,11 @@ export default async function PlayerPage({
                       <strong>
                         <TeamName name={match.away_team} />
                       </strong>
+                      {!match.group_code ? (
+                        <span>
+                          Bracket slots: {match.home_team} vs {match.away_team}
+                        </span>
+                      ) : null}
                       {result ? (
                         <span>
                           Result: {result.home_score}-{result.away_score} | Your points: {points}
