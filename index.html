@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="fi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MM2026 Futisveikkaus</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+          <p class="eyebrow">MM2026</p>
+          <h1>Futisveikkaus</h1>
+          <p class="lead">Veikkaa ottelut, valitse mestari ja seuraa pistetaulukkoa kisan edetessä.</p>
+        </div>
+      </section>
+
+      <section id="loginView" class="login-panel" aria-labelledby="loginTitle">
+        <div>
+          <p class="eyebrow">Kirjautuminen</p>
+          <h2 id="loginTitle">Aloita veikkaus</h2>
+        </div>
+        <form id="loginForm" class="login-form">
+          <label>
+            Nimi
+            <input id="nameInput" name="name" autocomplete="name" placeholder="Etunimi Sukunimi" required />
+          </label>
+          <label>
+            Rooli
+            <select id="roleInput" name="role">
+              <option value="player">Pelaaja</option>
+              <option value="admin">Admin</option>
+            </select>
+          </label>
+          <button type="submit">Kirjaudu</button>
+        </form>
+      </section>
+
+      <section id="appView" class="app is-hidden">
+        <header class="appbar">
+          <div>
+            <p id="activeUser" class="eyebrow"></p>
+            <h2>Kisakeskus</h2>
+          </div>
+          <div class="appbar__actions">
+            <button id="seedButton" class="ghost-button" type="button">Palauta demo</button>
+            <button id="logoutButton" class="ghost-button" type="button">Vaihda käyttäjää</button>
+          </div>
+        </header>
+
+        <nav class="tabs" aria-label="Näkymät">
+          <button class="tab is-active" type="button" data-tab="matches">Ottelut</button>
+          <button class="tab" type="button" data-tab="leaderboard">Leaderboard</button>
+          <button class="tab" type="button" data-tab="rules">Pisteytys</button>
+          <button id="adminTab" class="tab is-hidden" type="button" data-tab="admin">Admin</button>
+        </nav>
+
+        <section class="champion-panel">
+          <div>
+            <p class="eyebrow">Mestariveikkaus</p>
+            <h3>Valitse maailmanmestari</h3>
+            <p id="championLockText"></p>
+          </div>
+          <div class="champion-picker">
+            <select id="championSelect" aria-label="Mestariveikkaus"></select>
+            <span id="championPoints" class="score-pill">0 p</span>
+          </div>
+        </section>
+
+        <section id="matchesPanel" class="panel" data-panel="matches">
+          <div class="panel__head">
+            <div>
+              <p class="eyebrow">Ottelulista</p>
+              <h3>Syötä veikkaukset</h3>
+            </div>
+            <p id="matchCount" class="muted"></p>
+          </div>
+          <div id="matchesList" class="match-list"></div>
+        </section>
+
+        <section id="leaderboardPanel" class="panel is-hidden" data-panel="leaderboard">
+          <div class="panel__head">
+            <div>
+              <p class="eyebrow">Tilanne</p>
+              <h3>Leaderboard</h3>
+            </div>
+          </div>
+          <div id="leaderboardList" class="leaderboard"></div>
+        </section>
+
+        <section id="rulesPanel" class="panel is-hidden" data-panel="rules">
+          <div class="panel__head">
+            <div>
+              <p class="eyebrow">Säännöt</p>
+              <h3>Pisteytys</h3>
+            </div>
+          </div>
+          <div class="rules-grid">
+            <article><strong>12 p</strong><span>Oikea maailmanmestari</span></article>
+            <article><strong>5 p</strong><span>Täysin oikea lopputulos</span></article>
+            <article><strong>2 p</strong><span>Oikea voittaja tai tasapeli</span></article>
+            <article><strong>1 p</strong><span>Oikea maaliero</span></article>
+          </div>
+          <p class="muted">
+            Ottelu lukittuu automaattisesti aloitushetkellä. Täsmätulos antaa ottelusta 5 pistettä, muuten pisteet
+            lasketaan oikeasta merkistä ja maalierosta.
+          </p>
+        </section>
+
+        <section id="adminPanel" class="panel is-hidden" data-panel="admin">
+          <div class="panel__head">
+            <div>
+              <p class="eyebrow">Admin</p>
+              <h3>Lisää oikeat tulokset</h3>
+            </div>
+          </div>
+          <div id="adminList" class="match-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <template id="matchTemplate">
+      <article class="match-card">
+        <div class="match-card__meta">
+          <span class="badge"></span>
+          <time></time>
+        </div>
+        <div class="teams">
+          <strong class="home"></strong>
+          <span>vs</span>
+          <strong class="away"></strong>
+        </div>
+        <div class="prediction-row">
+          <label>
+            Koti
+            <input class="home-score" inputmode="numeric" min="0" max="20" type="number" />
+          </label>
+          <span class="dash">-</span>
+          <label>
+            Vieras
+            <input class="away-score" inputmode="numeric" min="0" max="20" type="number" />
+          </label>
+          <span class="status-pill"></span>
+        </div>
+        <p class="result-line"></p>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
