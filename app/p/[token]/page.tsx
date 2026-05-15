@@ -114,8 +114,14 @@ export default async function PlayerPage({
                 ["open", "Open"],
                 ["missing", "Missing"],
                 ["today", "Today"],
-                ["groups", "Groups"],
-                ["knockout", "Knockout"]
+                ["group1", "Group R1"],
+                ["group2", "Group R2"],
+                ["group3", "Group R3"],
+                ["r32", "R32"],
+                ["r16", "R16"],
+                ["qf", "Quarter-finals"],
+                ["sf", "Semi-finals"],
+                ["finals", "Finals/Bronze"]
               ].map(([value, label]) => (
                 <a key={value} href={`/p/${token}?tab=predictions&filter=${value}`} aria-current={filter === value ? "page" : undefined}>
                   {label}
@@ -245,28 +251,31 @@ export default async function PlayerPage({
 
 function ScoringInfo() {
   return (
-    <div className="rules-strip" aria-label="Scoring rules">
-      <article>
-        <strong>6</strong>
-        <span>Exact score</span>
-      </article>
-      <article>
-        <strong>3</strong>
-        <span>Correct winner/draw</span>
-      </article>
-      <article>
-        <strong>2</strong>
-        <span>Correct goal difference</span>
-      </article>
-      <article>
-        <strong>1</strong>
-        <span>One exact team score, other off by max 1</span>
-      </article>
-      <article>
-        <strong>20</strong>
-        <span>Champion pick</span>
-      </article>
-    </div>
+    <details className="info-box">
+      <summary>Scoring info</summary>
+      <div className="rules-strip" aria-label="Scoring rules">
+        <article>
+          <strong>6</strong>
+          <span>Exact score</span>
+        </article>
+        <article>
+          <strong>3</strong>
+          <span>Correct winner/draw</span>
+        </article>
+        <article>
+          <strong>2</strong>
+          <span>Correct goal difference</span>
+        </article>
+        <article>
+          <strong>1</strong>
+          <span>One exact team score, other off by max 1</span>
+        </article>
+        <article>
+          <strong>20</strong>
+          <span>Champion pick</span>
+        </article>
+      </div>
+    </details>
   );
 }
 
@@ -291,8 +300,18 @@ function filterMatches(matches: any[], filter: string, myPredictionMap: Map<stri
       }).format(new Date(match.starts_at));
       return matchDate === helsinkiDate;
     }
-    if (filter === "groups") return Boolean(match.group_code);
-    if (filter === "knockout") return !match.group_code;
+    if (filter === "group1") return matchNumber(match.id) >= 1 && matchNumber(match.id) <= 24;
+    if (filter === "group2") return matchNumber(match.id) >= 25 && matchNumber(match.id) <= 48;
+    if (filter === "group3") return matchNumber(match.id) >= 49 && matchNumber(match.id) <= 72;
+    if (filter === "r32") return matchNumber(match.id) >= 73 && matchNumber(match.id) <= 88;
+    if (filter === "r16") return matchNumber(match.id) >= 89 && matchNumber(match.id) <= 96;
+    if (filter === "qf") return matchNumber(match.id) >= 97 && matchNumber(match.id) <= 100;
+    if (filter === "sf") return matchNumber(match.id) >= 101 && matchNumber(match.id) <= 102;
+    if (filter === "finals") return matchNumber(match.id) >= 103 && matchNumber(match.id) <= 104;
     return true;
   });
+}
+
+function matchNumber(id: string) {
+  return Number(id.replace("m", ""));
 }
