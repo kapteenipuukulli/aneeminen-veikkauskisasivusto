@@ -11,7 +11,7 @@ export default async function PlayerPage({
   searchParams
 }: {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ tab?: string; message?: string }>;
+  searchParams: Promise<{ tab?: string; message?: string; filter?: string }>;
 }) {
   const { token } = await params;
   const { tab = "predictions", message, filter = "all" } = await searchParams;
