@@ -250,6 +250,35 @@ label {
   font-weight: 900;
 }
 
+.rules-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.rules-strip article {
+  min-height: 82px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 12px;
+}
+
+.rules-strip strong {
+  color: var(--green);
+  font-size: 1.65rem;
+  line-height: 1;
+}
+
+.rules-strip span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
 .auth-card {
   max-width: 760px;
   margin: 0 auto;
@@ -298,5 +327,9 @@ label {
     justify-content: center;
     padding: 0 8px;
     font-size: 0.9rem;
+  }
+
+  .rules-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

@@ -194,6 +194,7 @@ export default async function PlayerPage({
               <p className="eyebrow">Leaderboard</p>
               <h2>Shared places for tied scores</h2>
             </div>
+            <ScoringInfo />
             {rows.map((row) => (
               <article className="card row" key={row.id}>
                 <div className="row">
@@ -238,6 +239,29 @@ export default async function PlayerPage({
         ) : null}
       </main>
     </>
+  );
+}
+
+function ScoringInfo() {
+  return (
+    <div className="rules-strip" aria-label="Scoring rules">
+      <article>
+        <strong>5</strong>
+        <span>Exact score</span>
+      </article>
+      <article>
+        <strong>2</strong>
+        <span>Correct winner/draw</span>
+      </article>
+      <article>
+        <strong>1</strong>
+        <span>Correct goal difference</span>
+      </article>
+      <article>
+        <strong>12</strong>
+        <span>Champion pick</span>
+      </article>
+    </div>
   );
 }
 
