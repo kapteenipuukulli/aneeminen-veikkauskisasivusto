@@ -65,12 +65,14 @@ label {
 .hero {
   min-height: 330px;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
   padding: 44px clamp(20px, 5vw, 72px);
   background:
     linear-gradient(90deg, rgba(8, 22, 18, 0.84), rgba(8, 22, 18, 0.45), rgba(8, 22, 18, 0.05)),
     url("/world-cup-hero.png") center / cover;
   color: #fff;
+  text-align: center;
 }
 
 .hero h1 {
@@ -83,6 +85,8 @@ label {
 
 .hero p {
   max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
   color: rgba(255, 255, 255, 0.86);
   font-size: 1.08rem;
   line-height: 1.6;
