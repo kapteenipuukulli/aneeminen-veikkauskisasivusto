@@ -107,6 +107,7 @@ export default async function PlayerPage({
                 </button>
               </form>
             </div>
+            <p className="muted">Champion pick locks when the opening match kicks off: 11 Jun 2026, 22:00 Finnish time.</p>
             <nav className="tabs" aria-label="Match filters">
               {[
                 ["all", "All"],
