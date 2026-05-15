@@ -117,10 +117,11 @@ If this feature is added to an existing Supabase project, run `supabase/link-mod
 - Predictions lock at kick-off.
 - Missing prediction = 0 points.
 - Other players' predictions become visible only after the match has locked.
-- Exact score = 5 points.
-- Correct winner/draw = 2 points.
-- Correct goal difference = 1 point.
-- Correct champion = 12 points.
+- Exact score = 6 points.
+- Correct winner/draw = 3 points.
+- Correct goal difference = 2 points.
+- One team's goals exactly right and the other team's goals off by at most one = 1 point.
+- Correct champion = 20 points.
 - Tied scores share the same leaderboard rank.
 - Personal data is used only for this private friends contest.
 

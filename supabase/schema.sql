@@ -108,10 +108,15 @@ with match_points as (
     coalesce(sum(
       case
         when r.status <> 'approved' then 0
-        when p.home_score = r.home_score and p.away_score = r.away_score then 5
+        when p.home_score = r.home_score and p.away_score = r.away_score then 6
         else
-          case when sign(p.home_score - p.away_score) = sign(r.home_score - r.away_score) then 2 else 0 end +
-          case when (p.home_score - p.away_score) = (r.home_score - r.away_score) then 1 else 0 end
+          case when sign(p.home_score - p.away_score) = sign(r.home_score - r.away_score) then 3 else 0 end +
+          case when (p.home_score - p.away_score) = (r.home_score - r.away_score) then 2 else 0 end +
+          case
+            when (p.home_score = r.home_score and abs(p.away_score - r.away_score) <= 1)
+              or (p.away_score = r.away_score and abs(p.home_score - r.home_score) <= 1)
+            then 1 else 0
+          end
       end
     ), 0)::integer as match_points
   from public.predictions p
@@ -121,7 +126,7 @@ with match_points as (
 champion_points as (
   select
     cp.user_id,
-    case when cp.team_name = (select value #>> '{}' from public.contest_settings where key = 'champion') then 12 else 0 end as champion_points
+    case when cp.team_name = (select value #>> '{}' from public.contest_settings where key = 'champion') then 20 else 0 end as champion_points
   from public.champion_picks cp
 )
 select

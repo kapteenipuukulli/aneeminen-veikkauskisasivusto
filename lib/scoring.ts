@@ -11,11 +11,12 @@ export function scorePrediction(prediction?: Score | null, result?: Score | null
   const ra = result.away_score;
 
   if (ph === null || pa === null || rh === null || ra === null) return 0;
-  if (ph === rh && pa === ra) return 5;
+  if (ph === rh && pa === ra) return 6;
 
   let points = 0;
-  if (Math.sign(ph - pa) === Math.sign(rh - ra)) points += 2;
-  if (ph - pa === rh - ra) points += 1;
+  if (Math.sign(ph - pa) === Math.sign(rh - ra)) points += 3;
+  if (ph - pa === rh - ra) points += 2;
+  if ((ph === rh && Math.abs(pa - ra) <= 1) || (pa === ra && Math.abs(ph - rh) <= 1)) points += 1;
   return points;
 }
 

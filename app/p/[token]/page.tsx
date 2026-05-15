@@ -247,19 +247,23 @@ function ScoringInfo() {
   return (
     <div className="rules-strip" aria-label="Scoring rules">
       <article>
-        <strong>5</strong>
+        <strong>6</strong>
         <span>Exact score</span>
       </article>
       <article>
-        <strong>2</strong>
+        <strong>3</strong>
         <span>Correct winner/draw</span>
       </article>
       <article>
-        <strong>1</strong>
+        <strong>2</strong>
         <span>Correct goal difference</span>
       </article>
       <article>
-        <strong>12</strong>
+        <strong>1</strong>
+        <span>One exact team score, other off by max 1</span>
+      </article>
+      <article>
+        <strong>20</strong>
         <span>Champion pick</span>
       </article>
     </div>
