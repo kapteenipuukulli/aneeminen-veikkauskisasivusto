@@ -115,7 +115,7 @@ export default async function LinkedAdminPage({
                   {slot}
                   <select name="teamName" defaultValue={slotMap.get(slot) || ""}>
                     <option value="">TBD</option>
-                    {teams.map((team) => (
+                    {teamsForSlot(slot).map((team) => (
                       <option key={team.name} value={team.name}>
                         {team.flag} {team.name}
                       </option>
@@ -206,4 +206,16 @@ export default async function LinkedAdminPage({
       </main>
     </>
   );
+}
+
+function teamsForSlot(slot: string) {
+  const groups = slotGroups(slot);
+  if (!groups.length) return teams;
+  return teams.filter((team) => groups.includes(team.group));
+}
+
+function slotGroups(slot: string) {
+  if (/^[A-L][12]$/.test(slot)) return [slot[0]];
+  if (/^[A-L]+3$/.test(slot)) return slot.replace("3", "").split("");
+  return [];
 }
