@@ -14,7 +14,7 @@ export default async function HomePage() {
       <section className="hero">
         <div>
           <p className="eyebrow">World Cup 2026</p>
-          <h1>Aneeminen veikkauskisasivusto</h1>
+          <h1>Aneeminen veikkauskisa</h1>
           <p>
             Private prediction contest with score picks, a champion pick, leaderboard, reminders, FIFA news and
             admin-approved results.

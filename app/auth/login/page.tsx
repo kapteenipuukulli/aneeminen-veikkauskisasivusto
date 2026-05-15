@@ -9,7 +9,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <section className="hero">
         <div>
           <p className="eyebrow">Private World Cup 2026 contest</p>
-          <h1>Aneeminen veikkauskisasivusto</h1>
+          <h1>Aneeminen veikkauskisa</h1>
           <p>Predict scores, forget one, get zero. Football justice, but polite.</p>
         </div>
       </section>

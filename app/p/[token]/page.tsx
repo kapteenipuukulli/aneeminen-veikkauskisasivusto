@@ -50,7 +50,7 @@ export default async function PlayerPage({
       <section className="hero">
         <div>
           <p className="eyebrow">Personal prediction link</p>
-          <h1>Aneeminen veikkauskisasivusto</h1>
+          <h1>Aneeminen veikkauskisa</h1>
           <p>No login needed. This private link is your key, so do not share it with rival masterminds.</p>
         </div>
       </section>

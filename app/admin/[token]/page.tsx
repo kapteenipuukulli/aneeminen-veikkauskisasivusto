@@ -36,7 +36,7 @@ export default async function LinkedAdminPage({
       <section className="hero">
         <div>
           <p className="eyebrow">Admin link</p>
-          <h1>Aneeminen veikkauskisasivusto</h1>
+          <h1>Aneeminen veikkauskisa</h1>
           <p>JP admin control room. Keep this link private.</p>
         </div>
       </section>

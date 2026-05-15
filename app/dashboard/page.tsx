@@ -61,7 +61,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       <section className="hero">
         <div>
           <p className="eyebrow">Private contest</p>
-          <h1>Aneeminen veikkauskisasivusto</h1>
+          <h1>Aneeminen veikkauskisa</h1>
           <p>All match times are shown in Finnish time. Predictions lock at kick-off. Missing prediction = 0 points.</p>
         </div>
       </section>
